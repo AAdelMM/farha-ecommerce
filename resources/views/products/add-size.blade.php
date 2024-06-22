@@ -1,0 +1,67 @@
+@extends('layouts.app', ['activePage' => 'products', 'titlePage' => __('add product size')])
+
+@section('content')
+<div class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header card-header-primary">
+            <h4 class="card-title ">add product size</h4>
+          </div>
+          <div class="card-body">
+            <div class="my-form">
+  
+            <form method="POST" action="{{url('/')}}/product/{{$id}}/size" autocomplete="off" enctype="multipart/form-data">
+            @csrf
+
+            <div class="form-group">
+                <label for="image">image</label>
+                  <input type="file" name="image" id="image" placeholder="image" 
+                  class="form-control" required="required"  autocomplete="off"
+                   style="opacity:1;position:unset"/>
+               </div>
+
+               <div class="form-group">
+                   <label for="size">Size</label>
+                     <input type="text" style="" name="size" id="size" placeholder="size" class="form-control" required="required"  autocomplete="off"/>
+                  </div>
+
+            <div class="form-group">
+                <label for="stock">Stock</label>
+                  <input type="number" style="" name="stock" id="stock" placeholder="stock" class="form-control" required="required"  autocomplete="off"/>
+               </div>
+
+               <div class="form-group">
+                <label for="color_id">Color</label>
+                  <select id="color_id" name="color_id" class="form-control">
+                    @foreach ($color as $c)
+                    <option value="{{$c->id}}">{{$c->color}}-{{$c->color_ar}}</option>
+                    @endforeach
+                  </select>
+               </div>
+
+            
+           
+           <div class="row">
+                        <div class="col-12 text-center">
+                          <button type="submit" class="btn btn-sm btn-primary"> <i class="material-icons">add</i> Add</button>
+                        </div>
+                      </div>
+        </form>
+        
+        
+        
+        </div>
+          </div>
+        </div>
+      </div>
+      
+
+      <!-- end col -->
+
+
+    </div>
+  </div>
+</div>
+@endsection
