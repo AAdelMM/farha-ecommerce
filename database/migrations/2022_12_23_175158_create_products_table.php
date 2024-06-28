@@ -23,6 +23,7 @@ class CreateProductsTable extends Migration
             $table->string('avatar');
             $table->integer('price');
             $table->integer('category_id');
+            $table->json('images')->nullable()->after('avatar');
             $table->timestamps();
         });
     }
@@ -35,5 +36,6 @@ class CreateProductsTable extends Migration
     public function down()
     {
         Schema::dropIfExists('products');
+        $table->dropColumn('images');
     }
 }

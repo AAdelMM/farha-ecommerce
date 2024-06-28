@@ -82,6 +82,10 @@ Route::post('/build-elevator', [BuildController::class, 'create']);
 	
 	Route::post('checkout', [PublicController::class, 'placeOrder']);
 	Route::post('user-info', [PublicController::class, 'SaveUserInfo']);
+
+	// مثال لمسار في web.php
+Route::post('/public', [CartController::class, 'LoadCart'])->name('cart.add');
+
 });
 
 
@@ -245,7 +249,11 @@ Route::middleware(['middleware' => 'Admin'])->group(function () {
 		Route::post('/process', [OrdersController::class, 'returnOrder']);
 		Route::delete('/cancel-order/{id}', [OrdersController::class, 'CancelOrder']);
 
-
+		Route::get('/products/create', 'AllProductsController@create')->name('products.create');
+		Route::post('/products', 'AllProductsController@store')->name('products.store');
+		Route::get('/products/{product}', 'AllProductsController@show')->name('products.show');
+		// Add other necessary routes
+		
 
 		Route::get('/coupons', [CouponController::class, 'index']);
 		Route::get('/coupons/create', [CouponController::class, 'create']);

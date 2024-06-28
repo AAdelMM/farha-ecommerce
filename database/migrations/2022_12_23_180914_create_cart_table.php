@@ -20,7 +20,9 @@ class CreateCartTable extends Migration
             $table->string('coupon')->nullable();
             $table->integer('percentage')->nullable();
             $table->string('user_ip');
+            $table->string('cookie')->nullable(); // Define the 'cookie' column
             $table->integer('status')->default(0);
+            
             $table->timestamps();
         });
     }

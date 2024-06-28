@@ -102,6 +102,7 @@
                             {{$p[0]->name_ar}}
                         @endif
                   </span>
+                  
                   </div>
               </div>
           </div>
@@ -113,30 +114,38 @@
   <section class="product-details spad">
       <div class="container">
           <div class="row">
+            
               <div class="col-lg-6">
                   <div class="product__details__pic">
                       {{-- <div class="product__details__pic__left product__thumb nice-scroll">
                           <a class="pt active" href="#product-1">
-                              <img src="{{url('/')}}/uploads/{{$p[0]->avatar}}" alt="">
+                              <img src="{{url('/')}}/uploads/{{$p[0]->avatar}}" alt="hi">
                           </a>
                           @foreach ($sizes as $key => $c)
                           <a class="pt" href="#product-{{$key+2}}">
-                              <img src="{{url('/')}}/uploads/{{$c->image}}" alt="">
+                              <img src="{{url('/')}}/uploads/customerUploads/{{$c->image}}" alt="">
                           </a>
                           @endforeach
                           
                       </div> --}}
+                      
                       <div class="product__details__slider__content">
+                        
                           <div class="product__details__pic__slider owl-carousel">
-                              <img data-hash="product-1" class="product__big__img" src="{{url('/')}}/uploads/{{$p[0]->avatar}}" alt="">
+                              <img data-hash="product-1" class="product__big__img" src="{{url('/')}}/uploads/{{$p[0]->avatar}}" alt="To be colored">
+                             
                               {{-- @foreach ($sizes as $key => $c)
-                              <img data-hash="product-{{$key+2}}" class="product__big__img"
-                              src="{{url('/')}}/uploads/{{$c->image}}" alt="">
+                                
+                              <img data-hash="product-{{$key}}" class="product__big__img"
+                              src="{{url('/')}}/uploads/customerUploads/{{$c->images}}" alt="">
+                            
                               @endforeach --}}
+                              
                           </div>
                       </div>
                   </div>
               </div>
+              
               <div class="col-lg-6">
                   <div class="product__details__text">
                       <h3>
@@ -156,6 +165,7 @@
 
                         </span></h3>
                       {{-- <div class="rating">
+                       
                           <i class="fa fa-star"></i>
                           <i class="fa fa-star"></i>
                           <i class="fa fa-star"></i>
@@ -177,6 +187,7 @@
                             {{$p[0]->description_ar}}
                         @endif 
                       </p>
+                      
                       <a class="sizeChart" href="{{url('/')}}/size-chart">@lang('messages.sizechart')</a>
                       <div class="product__details__widget">
                           <ul>
@@ -231,7 +242,7 @@
                                     <span class="checkmark"><i class="fa fa-times"></i></span>
                                     </label>
                                 </div>
-
+                               
                             </li>
                               @endforeach
                               
@@ -285,6 +296,7 @@
                 </div>
 
               </div>
+              
               <div class="col-lg-12">
                   <div class="product__details__tab">
                       <ul class="nav nav-tabs" role="tablist">
@@ -337,6 +349,7 @@
               @foreach($more as $m)
               <div class="col-lg-3 col-md-4 col-sm-6">
                   <div class="product__item">
+                    
                       <div class="product__item__pic set-bg" data-setbg="{{url('/')}}/uploads/{{$m->avatar}}">
                           <ul class="product__hover">
                               <li><a href="{{url('/')}}/uploads/{{$m->avatar}}" class="image-popup">
@@ -389,6 +402,9 @@
      <!-- short menu end -->
      @section('scripts')
      <script>
+        //ensure image captured
+
+        //end of test
         $(".sticker_label-cancel").click(function(){
             $('.sticker_label').removeClass('active');
             $('.stickerImg').hide();
@@ -410,6 +426,7 @@
             targetC = $(this).next('.hiddenImg0').attr('target-class');
            $('.owl-item.active').append('<img src="'+image+'" class="'+targetC+'"/>');
         })
+
 $(".sticker_label").click(function(){
     let stickerIMG = $(this).children('.hiddenImg0').attr('src');
     th = $(this);
@@ -420,14 +437,14 @@ $(".sticker_label").click(function(){
     }, 500)
 })
         function SendVal(id, image){
-                tval2 = id;
+                tval2 = image;
             let requestUrl = $('.url').attr('url') + '/get-sub2';
             $.ajax({
                 type:"POST",
                 data: {tval:tval2},
                 url: requestUrl,
                 success: function(res) {
-                    //$(".subcolors2").html(res);
+                    $(".subcolors").html(res);
                         $('.owl-item.active').append('<img src="'+image+'"/>');
                         console.log(image)
                 }, error: function(err){
@@ -445,6 +462,7 @@ $(".sticker_label").click(function(){
            }, 400);
   let color = $(this).attr('color');
   let requestUrl = $('.url').attr('url') + '/get-size';
+  consol.log(sent)
   $.ajax({
                 type:"POST",
                 data: {color:color},
@@ -452,17 +470,80 @@ $(".sticker_label").click(function(){
                 success: function(res) {
                     $(".sizes").html(res);
                 }, error: function(err){
-                  // console.log(err)
+                   console.log(err)
                 }
             });
          })
-$(".addToCart").click(function(e){
+         //Add to cart button
+         $(".AddToCartBtn").click(function(e){
+    e.preventDefault();
+    let itemId = $(this).attr('itemid');
+    let quantity = $("input[name='quantity']").val();
+    let baseUrl = $(this).attr('baseurl');
+    let price = $(this).attr('price');
+
+    let selectedColors = [];
+    $(".sticker_label.active").each(function(){
+        let color = $(this).attr('color');
+        if (color) {
+            selectedColors.push(color);
+        }
+    });
+
+    let customImages = [];
+    $(".owl-item.active img").each(function() {
+        let imageUrl = $(this).attr('src');
+        if (imageUrl) {
+            customImages.push(imageUrl);
+        }
+    });
+
+    let cartData = {
+        item_id: itemId,
+        quantity: quantity,
+        price: price,
+        colors: selectedColors,
+        custom_images: customImages
+    };
+
+    // عرض البيانات في وحدة التحكم
+    console.log("Cart Data:", cartData);
+    $.ajaxSetup({
+    headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    }
+});
+
+    $.ajax({
+    type: "POST",
+    url: baseUrl + "/uploads",
+    data: cartData,
+    success: function(response){
+        console.log("Product added to cart with customizations", response);
+    },
+    error: function(xhr, status, error){
+        console.error("Error adding product to cart", error);
+        console.error("Status:", status);
+        console.error("Response Text:", xhr.responseText);
+    }
+});
+
+});
+
+
+
+
+
+
+
+/* $(".addToCart").click(function(e){
   if($('[name="size"]').is(':checked')) { 
     return true;
   }else{
     e.preventDefault();
   }
-})
+}) */
+//end of add to cart
 
 $(".toUpdate").blur(); 
         let ssii = $('input[name="size"]:checked').attr('stock');

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateFavTable extends Migration
+class AddImagesToProductsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,8 @@ class CreateFavTable extends Migration
      */
     public function up()
     {
-        Schema::create('fav', function (Blueprint $table) {
-            $table->id();
-            $table->integer('product_id');
-            $table->integer('user_id');
-            $table->string('cookie')->nullable(); 
-            $table->timestamps();
+        Schema::table('products', function (Blueprint $table) {
+            //
         });
     }
 
@@ -29,6 +25,8 @@ class CreateFavTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('fav');
+        Schema::table('products', function (Blueprint $table) {
+            //
+        });
     }
 }

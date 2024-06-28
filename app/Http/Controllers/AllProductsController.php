@@ -580,4 +580,45 @@ class AllProductsController extends Controller
     return view('products.show', ['products' => $products]);
     }
 
+
+
+    public function store(Request $request)
+    {
+        $validatedData = $request->validate([
+            'name' => 'required|string',
+            'avatar' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            // Additional validations for other fields
+        ]);
+
+        // Save base product details
+        $product = new Product();
+        $product->name = $request->name;
+        $product->slug = Str::slug($request->name);
+        $product->description = $request->description;
+        $product->price = $request->price;
+        // ... set other fields as required
+
+        if ($request->hasFile('avatar')) {
+            $avatarPath = $request->file('avatar')->store('uploads/customerUploads', 'public');
+            $product->avatar = $avatarPath;
+        }
+        $product->save();
+
+        // Save custom images if any
+        if ($request->has('custom_images')) {
+            foreach ($request->file('custom_images') as $image) {
+                $customImagePath = $image->store('uploads/customerUploads', 'public');
+                ProductImage::create([
+                    'product_id' => $product->id,
+                    'image_path' => $customImagePath,
+                    'type' => 'custom'
+                ]);
+            }
+        }
+
+        return redirect()->route('products.index')->with('success', 'Product created successfully.');
+    }
+
+    
 }
+

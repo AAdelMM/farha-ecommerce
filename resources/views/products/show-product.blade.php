@@ -54,6 +54,7 @@
                         @foreach ($images as $p)
                           <div class="col-md-4">
                             <div class="image">
+                              
                               <img src="{{url('/')}}/uploads/{{$p->picture}}" width="100%"/>
                               <form method="POST" action="{{url('/')}}/product/{{$p->id}}/picture" style="position:relative;top:-30px"  onSubmit="if(!confirm('Delete?')){return false;}">
                                 @csrf
@@ -99,6 +100,7 @@
                     <h3>Sizes</h3>
                     @if (count($size) > 0)
                     <hr/>
+                    
                      <div class="container">
                       <div class="row">
                         @foreach ($size as $p)
@@ -215,6 +217,7 @@
                               <?php // $ss = $subColor->where('color_id', $p->id)->get(); ?>
                               @foreach ($ss as $s)
                               <h5>{{$s->color}} - {{$s->color_ar}}</h5>
+                              
                               <h5 style="background-color:{{$s->color_code}};
                               width:50px;height:50px;display:block;margin:5px auto 0 auto;"
                               ></h5>
@@ -240,6 +243,7 @@
                               <h5 style="background-color:{{$s->color_code}};
                               width:50px;height:50px;display:block;margin:5px auto 0 auto;"
                               ></h5>
+                            
                               <img src="{{url('/')}}/uploads/{{$s->color_image}}" style="width:100px;margin:0 auto 5px auto;display:block"/>
                               <form method="POST" onSubmit="if(!confirm('Delete?')){return false;}" 
                                     action="{{url('/')}}/sub-sub-color/{{$s->id}}" class="d-inline-block">

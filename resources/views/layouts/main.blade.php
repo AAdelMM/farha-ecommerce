@@ -11,7 +11,8 @@ lang="ar"
 	<!-- Meta Tag -->
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-	  <meta name='copyright' content='github@AMrrprod'>
+	  <meta name="csrf-token" content="{{ csrf_token() }}">
+
 	  <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
@@ -38,12 +39,15 @@ lang="ar"
     <link rel="stylesheet" href="{{url('/')}}/css/new/bootstrap.min.css" type="text/css">
     <link rel="stylesheet" href="{{url('/')}}/css/new/font-awesome.min.css" type="text/css">
     <link rel="stylesheet" href="{{url('/')}}/css/new/elegant-icons.css" type="text/css">
-    <link rel="stylesheet" href="{{url('/')}}/css/new/jquery-ui.min.css" type="text/css">
+    <!-- <link rel="stylesheet" href="{{url('/')}}/css/new/jquery-ui.min.css" type="text/css"> -->
     <link rel="stylesheet" href="{{url('/')}}/css/new/magnific-popup.css" type="text/css">
     <link rel="stylesheet" href="{{url('/')}}/css/new/owl.carousel.min.css" type="text/css">
     <link rel="stylesheet" href="{{url('/')}}/css/new/slicknav.min.css" type="text/css">
     {{-- <link rel="stylesheet" href="{{url('/')}}/css/nice-select.css" type="text/css"> --}}
     <link rel="stylesheet" href="{{url('/')}}/css/new/style.css?ref" type="text/css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+
     <!-- Meta Pixel Code -->
     <script>
     !function(f,b,e,v,n,t,s)

@@ -16,6 +16,8 @@ use Illuminate\Support\Facades\Mail;
 
 class PublicController extends Controller
 {
+   
+    
     public function index()
     {
         if(is_null(Session::get('locale'))){
@@ -182,115 +184,71 @@ public function getSize(Request $request){
     }
 }
     
-    public function LoadCart(Request $request)
-    {
-        
-        // $size = DB::table('product_size')->find($request->size);
-        if ((Auth::check())){
-            
-            $checkCart = DB::table('cart')->where(function($query){
-            $query->where('user_id', '=', Auth::user()->id)
-            ->orWhere('cookie', '=', Cookie::get('user_cookie'));
-            })->where('status', '=', 0)->get();
-            if(count($checkCart) > 0){
-                    $getProduct = DB::table('products')->find($request->id);
-                    $insertCartItem = DB::table('cart_item')->insert([
-                        'product_name' => $getProduct->name,
-                        'price' => $request->price,
-                        'count' => $request->count,
-                        'product_id' => $request->id,
-                        'cart_id' => $checkCart[0]->id,
-                        'size' => $request->size,
-                        'sticker' => $request->sticker,
-                        'color' => $request->color,
-                        'color_id' => $request->color_id,
-                        'user_id' => Auth::user()->id,
-                        'created_at' => Carbon::now(),
-                    ]);
-            }else{
-                try{
-                    $createCart = DB::table('cart')->insert([
-                        'user_id' => Auth::user()->id,
-                        'user_name' => Auth::user()->name,
-                        'user_ip' => $request->ip(),
-                        'created_at' => Carbon::now(),
-                    ]);
-    
-                    if($createCart){
-                        $createdCart = DB::table('cart')->where(function($query){
-                            $query->where('user_id', '=', Auth::user()->id)
-                            ->orWhere('cookie', '=', Cookie::get('user_cookie'));
-                            })->where('status', '=', 0)->get();
-                        $getProduct = DB::table('products')->find($request->id);
-                        $insertCartItem = DB::table('cart_item')->insert([
-                            'product_name' => $getProduct->name,
-                            'price' => $request->price,
-                            'count' => $request->count,
-                            'product_id' => $request->id,
-                            'size' => $request->size,
-                            'sticker' => $request->sticker,
-                            'color' => $request->color,
-                            'color_id' => $request->color_id,
-                            'cart_id' => $createdCart[0]->id,
-                            'user_id' => Auth::user()->id,
-                            'created_at' => Carbon::now(),
-                        ]);
-                    }
-                }catch(\Exception $e) {
-                    return $e->getMessage();
-                }
-            }
-            
-        }else{
-            $checkCart = DB::table('cart')->where('cookie', '=', Cookie::get('user_cookie'))->where('status', '=', 0)->get();
-            if(count($checkCart) > 0){
-                    $getProduct = DB::table('products')->find($request->id);
-                    $insertCartItem = DB::table('cart_item')->insert([
-                        'product_name' => $getProduct->name,
-                        'price' => $request->price,
-                        'count' => $request->count,
-                        'product_id' => $request->id,
-                        'cart_id' => $checkCart[0]->id,
-                        'size' => $request->size,
-                        'sticker' => $request->sticker,
-                        'color' => $request->color,
-                        'color_id' => $request->color_id,
-                        'cookie' => Cookie::get('user_cookie'),
-                        'created_at' => Carbon::now(),
-                    ]);
-            }else{
-                try{
-                    $createCart = DB::table('cart')->insert([
-                        'cookie' => Cookie::get('user_cookie'),
-                        'user_ip' => $request->ip(),
-                        'created_at' => Carbon::now(),
-                    ]);
-    
-                    if($createCart){
-                        $createdCart = DB::table('cart')->where('cookie', '=', Cookie::get('user_cookie'))->where('status', '=', 0)->get();
-                        $getProduct = DB::table('products')->find($request->id);
-                        $insertCartItem = DB::table('cart_item')->insert([
-                            'product_name' => $getProduct->name,
-                            'price' => $request->price,
-                            'count' => $request->count,
-                            'product_id' => $request->id,
-                            'size' => $request->size,
-                            'sticker' => $request->sticker,
-                            'color' => $request->color,
-                            'color_id' => $request->color_id,
-                            'cart_id' => $createdCart[0]->id,
-                            'cookie' => Cookie::get('user_cookie'),
-                            'created_at' => Carbon::now(),
-                        ]);
-                    }
-                }
-                catch(\Exception $e) {
-                    return $e->getMessage();
-                }
-            }
-        }
+public function LoadCart(Request $request)
+{
+    // اجلب تفاصيل المنتج
+    $productId = $request->input('item_id');
+    $quantity = $request->input('quantity');
+    $price = $request->input('price');
+    $colors = $request->input('colors'); // هذا حقل جديد للألوان
+    $customImages = $request->input('custom_images'); // هذا حقل جديد للصور المخصصة
 
+    // بناء البيانات التي سيتم إدخالها في قاعدة البيانات
+    $cartItemData = [
+        'product_id' => $productId,
+        'count' => $quantity,
+        'price' => $price,
+        'colors' => json_encode($colors), // تخزين الألوان كـ JSON
+        'custom_images' => json_encode($customImages), // تخزين الصور كـ JSON
+        'created_at' => Carbon::now(),
+    ];
+
+    if (Auth::check()) {
+        $userId = Auth::user()->id;
+        $cartItemData['user_id'] = $userId;
+
+        // تحقق مما إذا كان لدى المستخدم سلة غير مدفوعة
+        $checkCart = DB::table('cart')->where('user_id', '=', $userId)->where('status', '=', 0)->first();
+        
+        if ($checkCart) {
+            // أضف العنصر إلى السلة الحالية
+            $cartItemData['cart_id'] = $checkCart->id;
+        } else {
+            // أنشئ سلة جديدة وأضف العنصر إليها
+            $cartId = DB::table('cart')->insertGetId([
+                'user_id' => $userId,
+                'created_at' => Carbon::now(),
+            ]);
+            $cartItemData['cart_id'] = $cartId;
+        }
+    } else {
+        // للمستخدمين الغير مسجلين (باستخدام الكوكيز)
+        $cookie = Cookie::get('user_cookie');
+        $cartItemData['cookie'] = $cookie;
+
+        $checkCart = DB::table('cart')->where('cookie', '=', $cookie)->where('status', '=', 0)->first();
+
+        if ($checkCart) {
+            $cartItemData['cart_id'] = $checkCart->id;
+        } else {
+            $cartId = DB::table('cart')->insertGetId([
+                'cookie' => $cookie,
+                'created_at' => Carbon::now(),
+            ]);
+            $cartItemData['cart_id'] = $cartId;
+        }
     }
+
+    // أدخل العنصر في جدول cart_item
+    try {
+        DB::table('cart_item')->insert($cartItemData);
+    } catch (\Exception $e) {
+        return response()->json(['error' => $e->getMessage()], 500);
+    }
+
+    return response()->json(['message' => 'Product added to cart with customizations']);
+}
+
 
 public function CartPage(Request $request)
 {
@@ -301,7 +259,7 @@ public function CartPage(Request $request)
             })->where('status', '=', 0)
         ->leftjoin('products', 'cart_item.product_id', '=', 'products.id')
         ->leftJoin('product_sticker', 'cart_item.sticker', '=', 'product_sticker.id')
-        ->select('cart_item.*', 'products.avatar', 'products.slug', 
+        ->select('cart_item.*', 'products.avatar', 'products.slug', 'products.images',
         'product_sticker.name_en as sticker_en', 'product_sticker.name_ar as sticker_ar')->get();
 
 $total = DB::select("SELECT SUM(price*count) AS total FROM cart_item

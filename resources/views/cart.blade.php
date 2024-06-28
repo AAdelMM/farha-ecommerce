@@ -14,6 +14,7 @@
                 <nav class="breadcrumb bg-light mb-30">
                     <a class="breadcrumb-item text-dark" href="{{url('/')}}">@lang('messages.home')</a>
                     <span class="breadcrumb-item active">@lang('messages.shoppingCart')</span>
+                  
                 </nav>
             </div>
         </div>
@@ -45,6 +46,7 @@
                     التوصيل يتم خلال 3-8 أيام عمل
                 @endif   
                 </h3> --}}
+                
                 <table class="table table-light table-borderless table-hover text-center mb-0">
                     <thead class="thead-dark">
                         <tr>
@@ -61,11 +63,21 @@
                     </thead>
                     <tbody class="align-middle">
                         @foreach ($cart_products as $key => $c)
+                       
                         <tr>
                             <td class="allign-middle">{{$key + 1}}</td>
                             <td class="align-middle">
-                                <a class="openImage" href="{{url('/')}}/uploads/{{$c->avatar}}" data-lightbox="{{$c->product_name}}" data-title="{{$c->product_name}}"><img src="{{url('/')}}/uploads/{{$c->avatar}}" alt="" style="width: 50px;"></a>
-                                <a href="{{url('/')}}/products/{{$c->slug}}">{{$c->product_name}}</a>
+                                <a class="openImage" href="{{url('/')}}/uploads/{{$c->avatar}}" data-lightbox="{{$c->product_name}}" data-title="{{$c->product_name}}"><img src="{{url('/')}}/uploads/{{$c->avatar}}" alt="customed" style="width: 50px;"></a>
+                                @foreach(session('cart') as $id => $details)
+    <div class="cart-item">
+        <div class="item-details">
+            <img src="{{ $details['custom_images'][0] ?? 'default-image.jpg' }}" alt="Customized Product Image">
+            <p>Colors: {{ implode(', ', json_decode($details['colors'], true)) }}</p>
+            <p>Quantity: {{ $details['count'] }}</p>
+            <p>Price: {{ $details['price'] }}</p>
+        </div>
+    </div>
+@endforeach
                             </td>
                             <td class="align-middle">{{$c->price}} @lang('messages.egp')</td>
                             <td class="align-middle">{{$c->size}}</td>
